@@ -1,10 +1,10 @@
-package com.chaquo.myapplication
+package com.mk.hls
 
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.chaquo.myapplication.databinding.ActivityMainBinding
+import com.mk.hls.databinding.ActivityMainBinding
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform

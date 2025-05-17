@@ -1,4 +1,4 @@
-package com.chaquo.myapplication
+package com.mk.hls
 
 import org.junit.Test
 
