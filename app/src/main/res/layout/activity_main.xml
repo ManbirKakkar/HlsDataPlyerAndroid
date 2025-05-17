@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/etUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        android:hint="YouTube URL"/>
+
+    <Button
+        android:id="@+id/btnExtract"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Extract"/>
+
+    <!-- ← Make sure this is here: -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:id="@+id/tvResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Results will appear here"/>
+    </ScrollView>
+</LinearLayout>
