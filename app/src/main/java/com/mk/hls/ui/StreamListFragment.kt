@@ -1,4 +1,4 @@
-package com.mk.hls
+package com.mk.hls.ui
 
 import android.content.Context
 import android.os.Bundle
@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mk.hls.adapter.StreamAdapter
 import com.mk.hls.databinding.FragmentStreamListBinding
 import kotlinx.parcelize.Parcelize
 
@@ -61,8 +62,6 @@ class StreamListFragment : Fragment() {
             adapter = this@StreamListFragment.adapter
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
-
-        // This is the corrected line:
         adapter.submitList(streams)
 
     }

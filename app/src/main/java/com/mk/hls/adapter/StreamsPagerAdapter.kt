@@ -1,7 +1,9 @@
-package com.mk.hls
+package com.mk.hls.adapter
 
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.mk.hls.ui.StreamItem
+import com.mk.hls.ui.StreamListFragment
 
 class StreamsPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
     private var dashStreams = emptyList<StreamItem>()
@@ -10,14 +12,14 @@ class StreamsPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
     fun submitLists(dash: List<StreamItem>, hls: List<StreamItem>) {
         dashStreams = dash
         hlsStreams = hls
-        notifyDataSetChanged()  // Force full refresh
+        notifyDataSetChanged()
     }
 
     override fun getItemCount() = 2
 
     override fun createFragment(position: Int) = when (position) {
-        0 -> StreamListFragment.newInstance(dashStreams)  // DASH at position 0
-        1 -> StreamListFragment.newInstance(hlsStreams)   // HLS at position 1
+        0 -> StreamListFragment.newInstance(dashStreams)
+        1 -> StreamListFragment.newInstance(hlsStreams)
         else -> throw IllegalArgumentException()
     }
 }

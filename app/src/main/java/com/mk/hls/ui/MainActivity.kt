@@ -1,11 +1,13 @@
-package com.mk.hls
+package com.mk.hls.ui
 
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayoutMediator
+import com.mk.hls.adapter.StreamsPagerAdapter
 import com.mk.hls.databinding.ActivityMainBinding
+import com.mk.hls.model.StreamViewModel
 
 class MainActivity : AppCompatActivity(), StreamListFragment.StreamSelectionListener {
     private lateinit var binding: ActivityMainBinding
@@ -35,8 +37,8 @@ class MainActivity : AppCompatActivity(), StreamListFragment.StreamSelectionList
         binding.viewPager.adapter = viewPagerAdapter
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {
-                0 -> "DASH"  // Was previously HLS
-                1 -> "HLS"   // Was previously DASH
+                0 -> "DASH"
+                1 -> "HLS"
                 else -> ""
             }
         }.attach()
@@ -45,6 +47,11 @@ class MainActivity : AppCompatActivity(), StreamListFragment.StreamSelectionList
     private fun setupObservers() {
         viewModel.streams.observe(this) { (dash, hls) ->
             viewPagerAdapter.submitLists(dash, hls)
+        }
+
+        viewModel.loading.observe(this) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.btnExtract.isEnabled = !isLoading
         }
     }
 

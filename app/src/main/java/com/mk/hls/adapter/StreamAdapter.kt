@@ -1,4 +1,4 @@
-package com.mk.hls
+package com.mk.hls.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mk.hls.databinding.ItemStreamBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.mk.hls.R
+import com.mk.hls.ui.StreamItem
+import com.mk.hls.util.shortUrl
 
 class StreamAdapter(
     private val onSelectionChanged: (StreamItem) -> Unit
@@ -20,8 +23,6 @@ class StreamAdapter(
         fun bind(stream: StreamItem, isSelected: Boolean) {
             with(binding) {
                 tvUrl.text = stream.url.shortUrl()
-                radioButton.isChecked = isSelected
-
                 root.setOnClickListener {
                     val previous = selectedPosition
                     selectedPosition = adapterPosition
