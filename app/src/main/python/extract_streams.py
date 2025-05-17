@@ -1,4 +1,3 @@
-# extract_streams.py
 import yt_dlp
 
 def get_dash_and_hls_urls(youtube_url):
@@ -10,7 +9,6 @@ def get_dash_and_hls_urls(youtube_url):
         'simulate': True,
         'forceurl': True,
         'skip_download': True,
-        'format': 'bestvideo+bestaudio/best',
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -21,14 +19,13 @@ def get_dash_and_hls_urls(youtube_url):
 
     for fmt in info.get('formats', []):
         url = fmt.get('url', '')
-        proto = fmt.get('protocol', '')
-        if proto == 'dash' or url.endswith('.mpd'):
+        proto = fmt.get('protocol', '').lower()
+        if not url: continue
+
+        if 'dash' in proto or url.endswith('.mpd'):
             dash_urls.append(url)
-        elif proto == 'm3u8_native' or url.endswith('.m3u8'):
+        elif 'm3u8' in proto or url.endswith('.m3u8'):
             hls_urls.append(url)
 
-    # de-duplicate
-    dash_urls = list(dict.fromkeys(dash_urls))
-    hls_urls  = list(dict.fromkeys(hls_urls))
-
-    return dash_urls, hls_urls
+    # Deduplicate
+    return list(dict.fromkeys(dash_urls)), list(dict.fromkeys(hls_urls))

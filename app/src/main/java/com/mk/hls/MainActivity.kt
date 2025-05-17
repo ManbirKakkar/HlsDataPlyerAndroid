@@ -1,23 +1,24 @@
 package com.mk.hls
 
-import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
+import android.text.method.ScrollingMovementMethod
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.tabs.TabLayoutMediator
 import com.mk.hls.databinding.ActivityMainBinding
-import com.chaquo.python.PyObject
-import com.chaquo.python.Python
-import com.chaquo.python.android.AndroidPlatform
 
-class MainActivity : AppCompatActivity() {
-
+class MainActivity : AppCompatActivity(), StreamListFragment.StreamSelectionListener {
     private lateinit var binding: ActivityMainBinding
-    private var pythonStarted = false
+    private lateinit var viewPagerAdapter: StreamsPagerAdapter
+    private val viewModel: StreamViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setupViewPager()
+        setupObservers()
 
         binding.btnExtract.setOnClickListener {
             val url = binding.etUrl.text.toString().trim()
@@ -25,62 +26,29 @@ class MainActivity : AppCompatActivity() {
                 binding.etUrl.error = "Please enter a YouTube URL"
                 return@setOnClickListener
             }
-            ExtractStreamsTask().execute(url)
+            viewModel.loadStreams(url)
         }
     }
 
-    private inner class ExtractStreamsTask : AsyncTask<String, Void, Pair<List<String>, List<String>>?>() {
-
-        override fun doInBackground(vararg params: String): Pair<List<String>, List<String>>? {
-            try {
-                if (!pythonStarted) {
-                    Python.start(AndroidPlatform(applicationContext))
-                    pythonStarted = true
-                }
-                val py = Python.getInstance()
-                val result: PyObject = py
-                    .getModule("extract_streams")
-                    .callAttr("get_dash_and_hls_urls", params[0])
-
-                // result.asList() will give a List<PyObject> for the tuple
-                val tupleElements = result.asList()
-                // Unpack the two lists
-                val dashPyList = tupleElements[0].asList()
-                val hlsPyList  = tupleElements[1].asList()
-
-                // Convert to List<String>
-                val dashUrls = dashPyList.map { it.toString() }
-                val hlsUrls  = hlsPyList.map { it.toString() }
-
-                return Pair(dashUrls, hlsUrls)
-            } catch (e: Exception) {
-                Log.e("PythonError", "Execution failed", e)
-                return null
+    private fun setupViewPager() {
+        viewPagerAdapter = StreamsPagerAdapter(this)
+        binding.viewPager.adapter = viewPagerAdapter
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when(position) {
+                0 -> "DASH"  // Was previously HLS
+                1 -> "HLS"   // Was previously DASH
+                else -> ""
             }
+        }.attach()
+    }
+
+    private fun setupObservers() {
+        viewModel.streams.observe(this) { (dash, hls) ->
+            viewPagerAdapter.submitLists(dash, hls)
         }
+    }
 
-        override fun onPostExecute(result: Pair<List<String>, List<String>>?) {
-            if (result == null) {
-                binding.tvResult.text = "Failed to extract streams."
-                return
-            }
-            val (dashUrls, hlsUrls) = result
-
-            // Log each URL
-            dashUrls.forEach { Log.d("DASH_URL", it) }
-            hlsUrls.forEach  { Log.d("HLS_URL", it) }
-
-            // Show in the TextView
-            val displayText = buildString {
-                append("DASH URLs:\n")
-                if (dashUrls.isEmpty()) append("  (none)\n")
-                else dashUrls.forEach { append("  • $it\n") }
-
-                append("\nHLS URLs:\n")
-                if (hlsUrls.isEmpty()) append("  (none)\n")
-                else hlsUrls.forEach { append("  • $it\n") }
-            }
-            binding.tvResult.text = displayText
-        }
+    override fun onStreamSelected(stream: StreamItem) {
+        binding.tvSelected.text = "URL: ${stream.url}"
     }
 }
