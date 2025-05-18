@@ -45,15 +45,31 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
-                android:layout_height="300dp" /> <!-- Give fixed height -->
+                android:layout_height="300dp" />
 
             <TextView
                 android:id="@+id/tvSelected"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:background="@android:color/background_light"
                 android:scrollbars="vertical"/>
+
+            <Button
+                android:id="@+id/exoPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Play Selected With Exo Player"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Play Selected With Shaka Player"/>
+
+
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
