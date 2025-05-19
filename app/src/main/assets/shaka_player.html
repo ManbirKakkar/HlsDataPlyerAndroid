@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Shaka Player</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.10/shaka-player.compiled.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.10/shaka-player.ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.10/controls.css" />
+
+    <style>
+        html, body {
+          margin: 0;
+          height: 100%;
+          background-color: black;
+        }
+        #video-container {
+          position: relative;
+          width: 100%;
+          height: 100%;
+        }
+        video {
+          width: 100%;
+          height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<div id="video-container" class="shaka-video-container">
+    <video
+            id="video"
+            class="shaka-video"
+            autoplay
+            playsinline
+            controls
+            crossorigin="anonymous"
+    ></video>
+    <div class="shaka-controls-container"></div>
+</div>
+
+<script>
+    function getQueryParam(name) {
+      return new URLSearchParams(window.location.search).get(name);
+    }
+
+    async function initPlayer() {
+      shaka.polyfill.installAll();
+
+      if (!shaka.Player.isBrowserSupported()) {
+        alert("Shaka not supported on this device.");
+        return;
+      }
+
+      const video = document.getElementById("video");
+      const container = document.getElementById("video-container");
+
+      const player = new shaka.Player(video);
+      const ui = new shaka.ui.Overlay(player, container, video);
+      ui.configure({}); // optional UI config
+
+      const controls = ui.getControls();
+      const url = decodeURIComponent(getQueryParam("streamUrl") || "");
+
+      try {
+        await player.load(url);
+        console.log("Playback started:", url);
+      } catch (e) {
+        console.error("Shaka error", e);
+        const overlay = document.createElement("div");
+        overlay.style = "position:absolute;top:0;left:0;color:white;background:red;padding:5px;";
+        overlay.innerText = `Shaka error: ${e.message}`;
+        document.body.appendChild(overlay);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", initPlayer);
+</script>
+</body>
+</html>
