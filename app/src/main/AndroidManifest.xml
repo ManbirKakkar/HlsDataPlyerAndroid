@@ -32,7 +32,11 @@
 
         <activity
             android:name=".shaka.ShakaPlayerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:hardwareAccelerated="true"
+            android:exported="true"
+            android:configChanges="keyboardHidden|orientation|screenSize" >
+
+        </activity>
     </application>
 
 </manifest>
